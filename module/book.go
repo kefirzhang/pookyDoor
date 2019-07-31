@@ -138,14 +138,27 @@ func GetChapterContent(c *gin.Context) {
 	if (err != nil) && (err != sql.ErrNoRows) {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
+	//PreId   int    `json:"pre_id"`
+	//	AfterId int    `json:"after_id"`
+
+	var PreId int
+	var AfterId int
+	err = DBH.QueryRow("select id from book_chapter where b_id = ? and id < ? order by id desc limit 1", bId, id).Scan(&PreId)
+	if (err != nil) && (err != sql.ErrNoRows) {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	err = DBH.QueryRow("select id from book_chapter where b_id = ? and id > ? order by id asc limit 1", bId, id).Scan(&AfterId)
+	if (err != nil) && (err != sql.ErrNoRows) {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
 
 	chapterDetail := ChapterContent{
 		id,
 		bId,
 		title,
 		content,
-		1,
-		2,
+		PreId,
+		AfterId,
 	}
 
 	data := make(map[string]interface{})
