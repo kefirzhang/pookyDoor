@@ -134,7 +134,8 @@ func GetChapterContent(c *gin.Context) {
 	}
 	defer stmtOut.Close()
 	err = stmtOut.QueryRow(bId, id).Scan(&title, &content) // WHERE number = 1
-	if err != nil {
+
+	if (err != nil) && (err != sql.ErrNoRows) {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
