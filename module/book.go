@@ -54,6 +54,15 @@ func Setup() {
 	//defer DBH.Close()
 }
 
+func Responds(iRet int, sMsg string, data interface{}, c *gin.Context) {
+	responseData := make(map[string]interface{})
+	responseData["iRet"] = iRet
+	responseData["sMsg"] = sMsg
+	responseData["data"] = data
+	c.JSON(0, responseData)
+	c.Abort() // 结束当前请求
+}
+
 //获取图书列表
 func GetBooks(c *gin.Context) {
 	rows, err := DBH.Query("select `id`,`name`,`last_chapter`,`finished` from book ")
@@ -79,12 +88,7 @@ func GetBooks(c *gin.Context) {
 			finished,
 		})
 	}
-
-	data := make(map[string]interface{})
-	data["iRet"] = 0
-	data["sMsg"] = "ok"
-	data["data"] = books
-	c.JSON(0, data)
+	Responds(0, "ok", books, c)
 }
 
 //获取图书的章节列表
@@ -114,13 +118,7 @@ func GetBookChapters(c *gin.Context) {
 			title,
 		})
 	}
-
-	data := make(map[string]interface{})
-	data["iRet"] = 0
-	data["sMsg"] = "ok"
-	data["data"] = chapters
-	c.JSON(0, data)
-
+	Responds(0, "ok", chapters, c)
 }
 
 func GetChapterContent(c *gin.Context) {
@@ -160,13 +158,7 @@ func GetChapterContent(c *gin.Context) {
 		PreId,
 		AfterId,
 	}
-
-	data := make(map[string]interface{})
-	data["iRet"] = 0
-	data["sMsg"] = "ok"
-	data["data"] = chapterDetail
-	c.JSON(0, data)
-
+	Responds(0, "ok", chapterDetail, c)
 }
 
 //https://github.com/go-sql-driver/mysql/wiki/Examples
