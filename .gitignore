@@ -2,3 +2,5 @@ vendor/
 .idea/
 ./idea
 .env.ini
+nohup.out
+pookyDoor
