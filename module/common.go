@@ -25,7 +25,8 @@ type Server struct {
 	Port   string `ini:"port"`
 	Token  string `ini:"token"`
 	Admin  string `ini:"admin"`
-	Passwd string `ini:"passwd"`
+	Pass   string `ini:"pass"`
+	Domain string `ini:"domain"`
 }
 type AppConf struct {
 	Database `ini:"database"`
@@ -63,13 +64,28 @@ func Responds(iRet int, sMsg string, data interface{}, c *gin.Context) {
 	c.Abort() // 结束当前请求
 }
 
-func Login(c *gin.Context) {
-	//user := c.Param("name")
-	//passwd := c.Param("name")
-	Responds(0, "logined", "", c)
+func IsLogin(c *gin.Context) {
+	val, _ := c.Cookie("login")
+	if val == "1" {
+		Responds(0, "login", "1", c)
+	} else {
+		Responds(0, "not login", "-1", c)
+	}
+}
 
+func Login(c *gin.Context) {
+	user := c.Request.FormValue("name")
+	pass := c.Request.FormValue("pass")
+
+	if user == AppConfig.Server.Admin && pass == AppConfig.Server.Pass {
+		c.SetCookie("login", "1", 86400, "/", AppConfig.Server.Domain, false, true)
+		Responds(0, "login", "", c)
+	} else {
+		Responds(-1, "wrong login info", "", c)
+	}
 }
 
 func LoginOut(c *gin.Context) {
+	c.SetCookie("login", "1", -1, "/", AppConfig.Server.Domain, false, true)
 	Responds(0, "LoginOut", "", c)
 }
