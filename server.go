@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-ini/ini"
 	"pookyDoor/module"
 )
 
@@ -15,7 +15,7 @@ func TokenAuth() gin.HandlerFunc {
 			module.Responds(401, "API token required", "", c)
 			return
 		}
-		if token != API_TOKEN {
+		if token != module.AppConfig.Server.Token {
 			module.Responds(401, "Invalid API token", "", c)
 			return
 		}
@@ -25,6 +25,8 @@ func TokenAuth() gin.HandlerFunc {
 
 func setupRouter() *gin.Engine {
 	router := gin.Default()
+	router.GET("/Login", module.Login)
+	router.GET("/LoginOut", module.LoginOut)
 	router.Use(TokenAuth())
 	router.GET("/GetBooks", module.GetBooks)                             // 图书列表
 	router.GET("/GetBookChapters/:b_id", module.GetBookChapters)         // 章节列表
@@ -32,12 +34,7 @@ func setupRouter() *gin.Engine {
 	return router
 }
 func main() {
-	cfg, err := ini.Load(".env.ini")
-	if err != nil {
-		panic(err)
-	}
-	API_TOKEN = cfg.Section("server").Key("server_api").String()
-	module.Setup() // 初始化
 	r := setupRouter()
-	r.Run(":" + cfg.Section("server").Key("server_port").String())
+	fmt.Println(module.AppConfig)
+	r.Run(":" + module.AppConfig.Server.Port)
 }

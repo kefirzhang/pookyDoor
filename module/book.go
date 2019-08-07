@@ -3,7 +3,7 @@ package module
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"github.com/go-ini/ini"
+
 	_ "github.com/go-sql-driver/mysql"
 	"strconv"
 )
@@ -26,41 +26,6 @@ type ChapterContent struct {
 	Content string `json:"content"`
 	PreId   int    `json:"pre_id"`
 	AfterId int    `json:"after_id"`
-}
-
-var DBH *sql.DB
-
-func Setup() {
-	var err error
-	cfg, err := ini.Load(".env.ini")
-	if err != nil {
-		panic(err)
-	}
-	dbConnection := cfg.Section("database").Key("db_connection").String()
-	dbHost := cfg.Section("database").Key("db_host").String()
-	dbPort := cfg.Section("database").Key("db_port").String()
-	dbDatabase := cfg.Section("database").Key("db_database").String()
-	dbUsername := cfg.Section("database").Key("db_username").String()
-	dbPassword := cfg.Section("database").Key("db_password").String()
-	dsn := dbUsername + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbDatabase + "?charset=utf8"
-	DBH, err = sql.Open(dbConnection, dsn)
-	if err != nil {
-		panic(err)
-	}
-	err = DBH.Ping()
-	if err != nil {
-		panic(err)
-	}
-	//defer DBH.Close()
-}
-
-func Responds(iRet int, sMsg string, data interface{}, c *gin.Context) {
-	responseData := make(map[string]interface{})
-	responseData["iRet"] = iRet
-	responseData["sMsg"] = sMsg
-	responseData["data"] = data
-	c.JSON(0, responseData)
-	c.Abort() // 结束当前请求
 }
 
 //获取图书列表
