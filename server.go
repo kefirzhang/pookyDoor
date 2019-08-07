@@ -19,7 +19,7 @@ func CheckLogin() gin.HandlerFunc {
 	}
 }
 
-func Cors() gin.HandlerFunc {
+func Cors() gin.HandlerFunc { //TODO 后续这个函数需要优化
 	return func(c *gin.Context) {
 		method := c.Request.Method
 
@@ -37,7 +37,7 @@ func Cors() gin.HandlerFunc {
 		if origin != "" {
 			//下面的都是乱添加的-_-~
 			// c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-			c.Header("Access-Control-Allow-Origin", "*")
+			c.Header("Access-Control-Allow-Origin", c.Request.Header.Get("Origin")) //TODO 安全优化点
 			c.Header("Access-Control-Allow-Headers", headerStr)
 			c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 			// c.Header("Access-Control-Allow-Headers", "Authorization, Content-Length, X-CSRF-Token, Accept, Origin, Host, Connection, Accept-Encoding, Accept-Language,DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Pragma")
@@ -59,7 +59,8 @@ func Cors() gin.HandlerFunc {
 func setupRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(Cors())
-	router.POST("/Login", module.Login)      //登陆
+	router.POST("/Login", module.Login) //登陆
+	//router.GET("/Login", module.Login)      //登陆
 	router.GET("/LoginOut", module.LoginOut) //登出
 	router.GET("/IsLogin", module.IsLogin)   //是否登陆
 	//下面操作需要登陆
