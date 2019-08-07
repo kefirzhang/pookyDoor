@@ -18,9 +18,9 @@ func CheckLogin() gin.HandlerFunc {
 
 func setupRouter() *gin.Engine {
 	router := gin.Default()
-	router.GET("/Login", module.Login)
-	router.GET("/LoginOut", module.LoginOut)
-	router.GET("/IsLogin", module.IsLogin)
+	router.POST("/Login", module.Login)      //登陆
+	router.GET("/LoginOut", module.LoginOut) //登出
+	router.GET("/IsLogin", module.IsLogin)   //是否登陆
 	//下面操作需要登陆
 	router.Use(CheckLogin())
 	router.GET("/GetBooks", module.GetBooks)                             // 图书列表
